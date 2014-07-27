@@ -1,14 +1,13 @@
 /** @jsx React.DOM */
 require(
-['ext/jquery','course', 'took_this', 'user', 'tips', 'prof', 'exam', 'ratings',
+['ext/jquery','course', 'took_this', 'user', 'tips', 'exam', 'ratings',
   'user_course', 'review', 'sign_in', 'ext/react', 'util', 'moment',
   'react_components'],
-function($, course, tookThis, user, tips, prof, _exam, ratings, user_course,
+function($, course, tookThis, user, tips, _exam, ratings, user_course,
     _review, _sign_in, React, util, moment, rc) {
 
   course.CourseCollection.addToCache(pageData.courseObj);
   user_course.UserCourses.addToCache(pageData.userCourseObjs);
-  prof.ProfCollection.addToCache(pageData.professorObjs);
 
   var courseObj = pageData.courseObj;
   var courseModel = course.CourseCollection.getFromCache(courseObj.id);
@@ -23,8 +22,6 @@ function($, course, tookThis, user, tips, prof, _exam, ratings, user_course,
     userCourse: userCourse,
     shouldLinkifySectionProfs: true
   });
-  //  $('#course-inner-container').html(courseInnerView.render().el);
-  //courseInnerView.animateBars();
 
    React.renderComponent(
       <rc.CourseInnerView data={courseModel.attributes} />,
@@ -59,18 +56,16 @@ function($, course, tookThis, user, tips, prof, _exam, ratings, user_course,
   $('#took-this-sidebar-container').html(tookThisSidebarView.render().el);
 
   React.renderComponent(
-    <rc.ReviewBox data={window.pageData.tipObjs} />,
-    document.getElementById('tips-collection-container')
-  );
-
-  React.renderComponent(
     <rc.ProfCollection data={window.pageData.professorObjs} />,
     document.getElementById('professor-review-container')
   );
 
+  React.renderComponent(
+    <rc.ReviewBox data={window.pageData.tipObjs} />,
+    document.getElementById('tips-collection-container')
+  );
 
   // TODO(david): Handle no professors for course
-  //$('#professor-review-container').html(profsView.render().el);
 
   if (!window.pageData.currentUserId) {
     _sign_in.renderBanner({
