@@ -351,31 +351,61 @@ function(RmcBackbone, $, _, _s, _bootstrap, _user, _course, _util, _facebook,
       }
     },
 
+    /**
+     * Picks the "Best" week for the user
+     *
+     * Find the closest week in the future with schedule items, or failing
+     * that the closest week in the past with schedule items
+     */
     setBestWeek: function() {
+      console.profile('best-week');
       var startOfCurrWeek = moment().day(1).startOf('day');
 
-      // Find the closest week in the future with schedule items, or failing
-      // that the closest week in the past with schedule items
       var futureItems = this.get('schedule_items').filter(function(item) {
+        countMe('something');
+        // Should update to use moment, same as pastItems
         return startOfCurrWeek <= item.get('start_date');
       });
 
       if (futureItems.length > 0) {
-        futureItems = _(futureItems).sortBy(function(item) {
-          return moment(item.get('start_date')).unix();
-        });
-        this.setWeek(moment(futureItems[0].get('start_date')).clone().day(1)
-            .startOf('day').toDate());
-      } else {
-        var pastItems = this.get('schedule_items').filter(function(item) {
-          return startOfCurrWeek.unix() > moment(item.get('start_date')).unix();
-        });
-        pastItems = _(pastItems).sortBy(function(item) {
-          return moment(item.get('start_date')).unix();
-        });
-        this.setWeek(moment(pastItems[pastItems.length-1].get('start_date'))
+        /* We only need the min here */
+        // futureItems = _(futureItems).sortBy(function(item) {
+        //   return moment(item.get('start_date')).unix();
+        // });
+        // futureItem = _.min(futureItems, function(item) {
+        //   return moment(item.get('start_date')).unix();
+        // });
+        // this.setWeek(moment(futureItem.get('start_date')).clone().day(1)
+        //     .startOf('day').toDate());
+      // } else {
+        // /* averages around 1.25 seconds */
+        // var pastItems = this.get('schedule_items').filter(function(item) {
+        //   countMe('take-two');
+        //   return startOfCurrWeek.unix() > moment(item.get('start_date')).unix();
+        // });
+        // pastItems = _(pastItems).sortBy(function(item) {
+        //   return moment(item.get('start_date')).unix();
+        // });
+        // this.setWeek(moment(pastItems[0].get('start_date'))
+        //     .clone().day(1).startOf('day').toDate());
+
+        /* Optimized stuff - averages around 970 ms (~280 ms speedup) */
+
+        var pastItem;
+        var pastItemTime = 0;
+        var startOfCurrWeekUnix = startOfCurrWeek.unix();
+        var items = this.get('schedule_items');
+        for (var i = 0, len = items.length; i < len; i++) {
+          if (startOfCurrWeekUnix > moment(items.models[i].get('start_date')).unix()
+              && moment(items.models[i].get('start_date')).unix() > pastItemTime) {
+            pastItemTime = moment(items.models[i].get('start_date')).unix();
+            pastItem = items.models[i];
+          }
+        }
+        this.setWeek(moment(pastItem.get('start_date'))
             .clone().day(1).startOf('day').toDate());
       }
+      console.profileEnd('best-week');
     },
 
     setWeek: function(startDate) {

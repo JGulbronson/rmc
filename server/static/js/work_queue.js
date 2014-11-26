@@ -35,7 +35,9 @@ define(['ext/underscore'], function(_) {
 
     var job = queue.shift();
 
+    console.profile('running-job');
     job.fn.apply(job.context);
+    console.profileEnd();
 
     setTimeout(function() {
       runNextJob();

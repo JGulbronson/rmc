@@ -61,6 +61,7 @@ require(['config_settings'], function(config_settings) {
       _user, _facebook, smartbanner, _work_queue, _search_bar, _sign_in) {
      // Show a banner to visitors from Android browsers linking
      // to our Android app on the Google Play Store.
+      console.time('schedule');
       $(function() {
         $.smartbanner({
           // Options for the smart banner

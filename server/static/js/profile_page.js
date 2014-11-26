@@ -5,6 +5,8 @@ require(
 function($, _, _s, _bootstrap, term, _course, friend, _util, user, _user_course,
   _prof, _exam, _raffle_unlock, _schedule, _sign_in, _work_queue) {
 
+  console.profile('profile-page');
+
   _course.CourseCollection.addToCache(pageData.courseObjs);
   _user_course.UserCourses.addToCache(pageData.userCourseObjs);
   _prof.ProfCollection.addToCache(pageData.professorObjs);
@@ -80,6 +82,7 @@ function($, _, _s, _bootstrap, term, _course, friend, _util, user, _user_course,
         showSharing: window.pageData.ownProfile
       });
       $schedulePlaceholder.replaceWith(scheduleView.el);
+      console.timeEnd('schedule');
     });
   }
 
@@ -190,4 +193,6 @@ function($, _, _s, _bootstrap, term, _course, friend, _util, user, _user_course,
   mixpanel.track('Impression: Profile page');
 
   $(document.body).trigger('pageScriptComplete');
+
+  console.profileEnd('profile-page');
 });
