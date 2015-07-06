@@ -2,123 +2,6 @@ define(
 ['ext/jquery', 'ext/react', 'ext/classnames', 'util'],
 function($, React, classnames, util) {
 
-  /* NEED: Generic expandable container
-   * prof.js:75
-   * Can give the number to show at the start
-   * The React class to display
-   * */
-
-  var ScholarshipContainer = React.createClass({
-    propTypes: {
-      scholarshipData: React.PropTypes.array.isRequired
-    },
-
-    getInitialState: function() {
-      return {
-        expanded: false,
-        minShow: 5,
-        removedIds: []
-      }
-    },
-
-    toggleExpand: function() {
-      var self = this;
-
-      if (this.state.expanded) {
-        var navBarHeight = $("#site-nav").height();
-        var margin = 16;
-        var titleTop = $(React.findDOMNode(self.refs.title)).offset().top;
-        $('html,body').animate({
-          scrollTop: titleTop - navBarHeight - margin
-        }, 300);
-
-        $('.expanded-scholarships').fancySlide('up', 300, function() {
-          self.setState({expanded: !self.state.expanded});
-        });
-      } else {
-        $('.expanded-scholarships').fancySlide('down', 300, function() {
-          self.setState({expanded: !self.state.expanded});
-        });
-      }
-    },
-
-    numHidden: function() {
-      return this.props.scholarshipData.length - this.state.minShow -
-          this.state.removedIds.length;
-    },
-
-    getFooter: function() {
-      var footerSpan;
-      if (!this.state.expanded) {
-        footerText = 'See ' + this.numHidden() + ' more ' +
-            util.pluralize(this.numHidden(), 'scholarship');
-        footerSpan = <span>{footerText} &nbsp; <i className="icon-caret-down"></i></span>;
-      } else {
-        footerSpan = <span><i className="icon-caret-up"></i> &nbsp; Hide scholarships</span>;
-      }
-
-      var footer = (
-        <div className="expand-footer" onClick={this.toggleExpand}>
-          {footerSpan}
-        </div>
-      )
-
-      if (this.props.scholarshipData.length <= this.state.minShow) {
-        footer = (
-          <div className="empty-footer">
-          </div>
-        )
-      }
-
-      return footer;
-    },
-
-    addRemovedId: function(i) {
-      this.setState({removedIds: this.state.removedIds.concat([i])})
-    },
-
-    render: function() {
-      var self = this;
-
-      var visibleScholarships = this.props.scholarshipData.
-          filter(function(s) {
-            return self.state.removedIds.indexOf(s.id) === -1;
-          }).
-          slice(0, self.state.minShow).
-          map(function(data, i) {
-            return <ScholarshipBox key={data.id} data={data} onRemove={self.addRemovedId}/>
-          }
-      );
-
-      var hiddenScholarships = this.props.scholarshipData.
-          filter(function(s) {
-            return self.state.removedIds.indexOf(s.id) === -1;
-          }).
-          slice(self.state.minShow).
-          map(function(data, i) {
-            return <ScholarshipBox key={data.id} data={data} onRemove={self.addRemovedId}/>
-          }
-      );
-
-      if (this.props.scholarshipData.length == 0) {
-        return null;
-      }
-
-      return (
-        <div>
-          <h1 ref="title">Scholarships you may qualify for</h1>
-          <div className="scholarship-container">
-            {visibleScholarships}
-            <div className="expanded-scholarships hide-initial">
-              {hiddenScholarships}
-            </div>
-          </div>
-          {this.getFooter()}
-        </div>
-      );
-    }
-  });
-
   var ScholarshipBoxInner = React.createClass({
     propTypes: {
       removeFromProfile: React.PropTypes.func.isRequired
@@ -216,6 +99,7 @@ function($, React, classnames, util) {
   });
 
   return {
-    ScholarshipContainer: ScholarshipContainer
+    ScholarshipContainer: ScholarshipContainer,
+    ScholarshipBox: ScholarshipBox
   };
 });
