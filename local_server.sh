@@ -17,10 +17,10 @@ trap clean_up SIGTERM SIGINT ERR
 mkdir -p mongodb
 mkdir -p logs
 echo "Starting mongodb"
-mongod --config config/mongodb_local.conf &
+#mongod --config config/mongodb_local.conf &
 
 echo "Starting redis-server"
-redis-server config/redis_local.conf &
+# redis-server config/redis_local.conf &
 
 echo "Starting compass watch"
 compass watch server &
@@ -30,11 +30,11 @@ node_modules/react-tools/bin/jsx --watch -x jsx server/static/jsx/ server/static
 
 # TODO(jlfwong): It seems to me like the --autoreload flag is being ignored
 echo "Starting celery worker"
-PARENT_DIR=$(dirname `pwd`) \
-  PYTHONPATH="${PARENT_DIR}" \
-  celery -A rmc.shared.tasks worker \
-    --autoreload \
-    --loglevel=INFO &
+#PARENT_DIR=$(dirname `pwd`) \
+#  PYTHONPATH="${PARENT_DIR}" \
+#  celery -A rmc.shared.tasks worker \
+#    --autoreload \
+#    --loglevel=INFO &
 
 echo "Starting flask server"
 FLASK_CONFIG=../config/flask_dev.py \
