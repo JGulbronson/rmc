@@ -49,6 +49,12 @@ class Professor(me.Document):
     # eg. ['MATH', 'CS']
     departments_taught = me.ListField(me.StringField())
 
+    emails = me.ListField(me.StringField(), default=['Unavailable'])
+
+    phone_numbers = me.ListField(me.StringField(), default=['Unavailable'])
+
+    offices = me.ListField(me.StringField(), default=['Unavailable'])
+
     clarity = me.EmbeddedDocumentField(_rating.AggregateRating,
                                        default=_rating.AggregateRating())
     easiness = me.EmbeddedDocumentField(_rating.AggregateRating,
@@ -288,6 +294,9 @@ class Professor(me.Document):
             #'last_name': self.last_name,
             #'ratings': self.get_ratings(),
             'name': self.name,
+            'emails': self.emails,
+            'offices': self.offices,
+            'phone_numbers': self.phone_numbers,
         }
 
         if course_id:

@@ -13,10 +13,14 @@ function(backbone, $, _, ratings, util, review, tips) {
     subject: 'professor'
   });
 
-  var kittenNum = util.getKittenNumFromName(pageData.profName);
+  var kittenNum = util.getKittenNumFromName(pageData.profInfo.name);
+  console.log(pageData.profInfo.emails);
   var profInner =  _.template($('#prof-inner-tpl').html(), {
-    'kittenNum': kittenNum
-  })
+    'kittenNum': kittenNum,
+    'emails': $(pageData.profInfo.emails),
+    'phone_numbers': $(pageData.profInfo.phone_numbers),
+    'offices': $(pageData.profInfo.offices)
+  });
   $('.prof-info-placeholder').replaceWith(profInner);
 
   $('.career-rating-placeholder').html(averageRatingsView.render().el);

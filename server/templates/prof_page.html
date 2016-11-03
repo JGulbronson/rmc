@@ -4,13 +4,13 @@
   <link rel="stylesheet" href="{{ '/static/css/prof_page.css'|version }}">
 {% endblock %}
 
-{% block page_title %}{{ prof_name }}{% endblock %}
+{% block page_title %}{{ prof_info.name }}{% endblock %}
 
 {% block header %}
   <div class="container-fluid course-header">
     <div class="row-fluid">
       <div class="span10">
-        <h1 class="page-title">{{ prof_name }}</h1>
+        <h1 class="page-title">{{ prof_info.name }}</h1>
         <p class="lead"> Teaches {{ prof_departments_list|join(', ') }}</p>
       </div>
       <div class="span2" id="rating-box-container"></div>
@@ -21,7 +21,7 @@
 {% block scripts %}
 <script>
   window.pageData.profRatings = {{ prof_ratings|tojson|safe }};
-  window.pageData.profName = {{ prof_name|tojson|safe }};
+  window.pageData.profInfo = {{ prof_info|tojson|safe }};
   window.pageData.profCourses = {{prof_courses|tojson|safe}};
   window.pageData.tipObjs = {{tip_objs|tojson|safe}};
   window.pageData.tipObjsByCourse = {{tip_objs_by_course|tojson|safe}};

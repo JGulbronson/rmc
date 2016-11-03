@@ -1,3 +1,4 @@
+import rmc.shared.secrets as s
 import rmc.shared.constants as c
 import rmc.shared.util as rmc_util
 import rmc.models as m
@@ -13,6 +14,9 @@ import time
 import re
 import sys
 import uuid
+import requests
+
+API_UWATERLOO_V2_URL = 'https://api.uwaterloo.ca/v2'
 
 
 def import_departments():
@@ -208,16 +212,28 @@ def import_professors():
             'last_name': clean_name(prof_name['last_name']),
         }
 
-    file_names = glob.glob(os.path.join(os.path.dirname(__file__),
-            c.REVIEWS_DATA_DIR, '*.txt'))
-    for file_name in file_names:
-        with open(file_name, 'r') as f:
-            data = json.load(f)
-        professor = clean_professor(data)
-        # Since user's can now add professors, gotta first check
-        # that the professor does not aleady exist
-        if not m.Professor.objects(**professor):
-            m.Professor(**professor).save()
+    #file_names = glob.glob(os.path.join(os.path.dirname(__file__),
+    #        c.REVIEWS_DATA_DIR, '*.txt'))
+    #for file_name in file_names:
+    #    with open(file_name, 'r') as f:
+    #        data = json.load(f)
+    #    professor = clean_professor(data)
+    #    # Since user's can now add professors, gotta first check
+    #    # that the professor does not aleady exist
+    #    if not m.Professor.objects(**professor):
+    #        m.Professor(**professor).save()
+
+    for prof in m.Professor.objects():
+        print prof.name
+        response = requests.get('%s/directory/search.json?q=%s&key=%s' % (
+            API_UWATERLOO_V2_URL, prof.name, s.OPEN_DATA_API_KEY)).json
+
+        if response['meta']['status'] == 200:
+            data = response['data'][0]
+            prof.emails = data['email_addresses']
+            prof.phone_numbers = data['telephone_numbers']
+            prof.offices = data['offices']
+            prof.save()
 
     print 'imported professors:', m.Professor.objects.count()
 
